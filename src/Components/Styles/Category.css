@@ -1,0 +1,33 @@
+#categoryBody{
+    background: url(https://images.pexels.com/photos/326333/pexels-photo-326333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 97.8vh;
+    width :100%;
+}
+
+
+#categoryCard{
+   margin-left: 5%;
+   width: 70%;
+   margin-top: 40%;
+}
+
+#categoryCard:hover{
+    cursor:pointer ;
+  
+}
+
+#categoryBtn{
+    margin-top: 5%;
+    margin-left: 20%;
+    color:black;
+    background: rgba(1,1,1,0);
+
+}
+#categoryBtn:hover{
+    color:white;
+    background: rgb(2, 125, 249);
+
+}

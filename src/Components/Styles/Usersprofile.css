@@ -1,0 +1,70 @@
+#usertable{
+  width: 70%;
+  position:relative;
+ 
+  margin-top: 5%;
+  justify-content: center;
+  margin-left: 10%;
+}
+thead{
+  background: rgba(0,0,0, 0.5);
+}
+  #userrow{
+  background: rgba(0, 0, 0, );
+  color:rgb(255, 253, 253)
+}
+tbody tr:hover{
+  background: rgba(255, 255, 253, 0.534);
+  color:rgb(7, 0, 0)
+}
+
+#usersbody{
+  background: url(https://images.pexels.com/photos/326333/pexels-photo-326333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-color: rgba(0,0,0,.5);
+  height: 750px;
+  width :100%;
+}
+#edituserbtn{
+  background:rgba(0,0,0,1);
+
+  color:darkcyan
+}
+#edituserbtn:hover{
+  background: rgb(255, 253, 251)
+}
+
+#deleteuserbtn{
+  background:rgba(0,0,0,1);
+  color:darkcyan
+}
+#deleteuserbtn:hover{
+  background: rgb(255, 253, 251)
+  
+}
+
+.paginationBttns1 {
+  width: 80%;
+  height: 40px;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 15%;
+  margin-left: 10%;
+ 
+}
+.paginationBttns1 a {
+  padding: 10px;
+  margin: 8px;
+  border-radius: 5px;
+  border: 1px inset;
+  color: #fbfbfc;
+  cursor: pointer;
+}
+
+.paginationBttns1 a:hover {
+  color: #2b2eff;
+  background-color: #f1f1f7;
+}

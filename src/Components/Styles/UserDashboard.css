@@ -1,0 +1,12 @@
+
+#menu{
+    color:black;
+    margin-top: 10px;
+}
+#menu:hover{
+    color:crimson;
+}
+
+#logoutMenu{
+    margin-top: 110%;
+}
