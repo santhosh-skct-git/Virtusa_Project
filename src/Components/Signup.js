@@ -28,7 +28,6 @@ function Signup() {
 
   const history = useHistory();
   const validationSchema = Yup.object({
-    //useroradmin: Yup.number().nullable().required("Required"),
     username: Yup.string().required('*Required'),
     email: Yup.string()
       .email(' *Invalid email format')
@@ -52,7 +51,7 @@ function Signup() {
   
  
   const onSubmit = async(data,onSubmitProps) => {
-    console.log(data)
+   
     const data1={
       useroradmin:data.useroradmin,
       username:data.username ,
@@ -71,7 +70,7 @@ function Signup() {
           draggable: true,
           progress: undefined,
           });
-          console.log(response);
+        
           setTimeout(() => {
            history.push("/user/login")
           }, 3000);
@@ -86,7 +85,7 @@ function Signup() {
             draggable: true,
             progress: undefined,
             });
-          console.log("error");
+         
         }
       )
        

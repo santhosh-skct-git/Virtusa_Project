@@ -34,7 +34,8 @@ function UserDashboard() {
 
     emailjs.sendForm('service_evj23ns', 'template_vk919xl', e.target, 'GjWUPvhF7OiW-0lS8')
       .then((result) => {
-        window.location.reload()
+        toast.success("Email sent!!!")
+       setMailShow(false)
       }, (error) => {
         console.log(error.text);
       });
@@ -47,14 +48,14 @@ function UserDashboard() {
   }
 
   const handleEdit = (userid) => {
-    console.log(userDetails);
+   
     axios.put(`http://localhost:8080/updateUserById/${userid}`, userDetails, {
       headers: {
         Authorization: localStorage.getItem("token")
       }
 
     }).then((res) => {
-      console.log(res);
+    
       toast.success('Updated Successfully', {
         position: "top-center",
         closeOnClick: true,
@@ -80,7 +81,6 @@ function UserDashboard() {
         Authorization: localStorage.getItem("token")
       }
     }).then((response) => {
-      console.log(response);
       setUserDetails(response.data)
     })
       .catch((err) => {
@@ -88,24 +88,19 @@ function UserDashboard() {
       })
   }, [])
 
-  return <div><ToastContainer /><Navbar   >
+  return <div><ToastContainer /><Navbar >
 
-    <Navbar.Brand href="/home" style={{ color: 'white' }}>Travel Yaari</Navbar.Brand>
+    <Navbar.Brand href="/home" style={{ color: 'Black' }}>Travel Yaari</Navbar.Brand>
 
-    {/* <Nav className="me-auto">
-        <Nav.Link href="/user/home" style={{ color: 'white', marginRight: '35px' }}>Home</Nav.Link>
-        <Nav.Link href="/user/dashboard" style={{ color: 'white', marginRight: '35px' }}>Dashboard</Nav.Link>
-        <Nav.Link href="/user/booking" style={{ color: 'white', marginRight: '35px' }}>My Booking</Nav.Link>
-        <Nav.Link href="/user/review" style={{ color: 'white', marginRight: '35px' }}>Reviews</Nav.Link>
-      </Nav> */}
+   
     <Container style={{ marginLeft: '65%' }}>
       <Nav >
-        <a className="btn" onClick={handleShow}  ><TiThMenu /></a>
+        <a className="btn btn-secondary" onClick={handleShow}  ><TiThMenu /></a>
 
         <Navbar.Toggle />
         <Navbar.Offcanvas show={show} onHide={handleClose} className="" placement="end" style={{  width: '20%' }}>
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Welcome !!!</Offcanvas.Title>
+            <Offcanvas.Title>😊Welcome {userDetails.username} !!!</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav.Link id="menu" className="btn" href="/user/home" >Home</Nav.Link>
@@ -129,7 +124,7 @@ function UserDashboard() {
 
 
   </Navbar>
-    <Modal show={infoshow}>
+    <Modal show={infoshow} onHide={handleInfoClose}>
       <Modal.Header ><Modal.Title style={{ marginLeft: '200px' }}><BsPersonCircle size={60} /></Modal.Title>  </Modal.Header>
       <Modal.Body>
         <div style={{ marginLeft: '150px' }}>
@@ -151,13 +146,13 @@ function UserDashboard() {
               handleChange(e, "mobileNumber")
             }} ></input>
           </div>
-          <Button className="btn btn-warning" onClick={handleInfoClose} style={{ marginTop: "35px" }}>Cancel</Button>
-          <Button onClick={() => { handleEdit(userDetails.id) }} style={{ marginTop: "35px", marginLeft: '60px' }}>Update</Button>
+          <Button  id="cancelInfoBtn" onClick={handleInfoClose} style={{ marginTop: "35px" }}>Cancel</Button>
+          <Button id="updateInfoBtn" onClick={() => { handleEdit(userDetails.id) }} style={{ marginTop: "35px", marginLeft: '60px' }}>Update</Button>
         </div>
       </Modal.Body>
     </Modal>
     <Modal show={mailshow} onHide={handleMailClose}>
-      <Modal.Header closeButton></Modal.Header>
+      <Modal.Header closeButton><Modal.Title><strong>Contact us...</strong></Modal.Title></Modal.Header>
       <Modal.Body>
         <form onSubmit={sendEmail} style={{ marginLeft: '10%' }}>
           <label htmlFor="username">UserName</label>
@@ -173,8 +168,8 @@ function UserDashboard() {
 
           <textarea className='form-control' name='message' placeholder='Write your message here' style={{ marginTop: "35px", width: '80%', height: '90px' }}></textarea>
 
-          <Button onClick={handleMailClose} style={{ marginTop: "35px", marginLeft: '50px' }}>Cancel</Button>
-          <Button type='submit' onclick={sendEmail} style={{ marginTop: "35px", marginLeft: '50px' }}>Send</Button>
+          <Button id="cancelEmailBtn"onClick={handleMailClose} style={{ marginTop: "35px", marginLeft: '50px' }}>Cancel</Button>
+          <Button id="sendEmailBtn" type='submit' onclick={sendEmail} style={{ marginTop: "35px", marginLeft: '50px' }}>Send</Button>
         </form>
       </Modal.Body>
     </Modal>

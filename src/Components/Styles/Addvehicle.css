@@ -8,9 +8,8 @@
   }
 
 #cardbody{
-  background: url(https://images.pexels.com/photos/326333/pexels-photo-326333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
-  /* background: url('D:\frontend\src\Components\Styles\admin.jpg'); */
-  background-size: cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://t3.ftcdn.net/jpg/02/73/49/66/360_F_273496611_DwZ2AQbdTi1I7sgPdBXfYwf80lSbl3jo.jpg');
+  background-size: 100% 100%;
   background-attachment: fixed;
   height: 1200px;
 }
@@ -51,7 +50,7 @@
     text-align: left;
   }
 
-  form{
+  #form{
     position: relative;
     margin-left: 40%;
     

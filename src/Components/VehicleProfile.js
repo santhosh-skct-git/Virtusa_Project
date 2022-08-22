@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import './Styles/vehicleprofile.css'
@@ -10,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from "react-paginate";
 
 function VehicleProfile() {
+  const history =useHistory();
   const [show, setShow] = useState(false);
   const [busdetails, setBusdetails] = useState({});
   const [pageNumber,setPageNumber]=useState(0);
@@ -33,37 +35,29 @@ function VehicleProfile() {
       [field]: event.target.value,
     })
   }
-  // const initialValues = {
-  //   vehicleName: '',
-  //   vehicleTiming: '',
-  //   vehicleFromTo: '',
-  //   vehicleImageURL: '',
-  //   price: '',
-  //   capacity: '',
-  //   vehicleDescription: ''
-  // }
-  // const validationSchema = Yup.object({
-  //   vehicleName: Yup.string().required('*Required'),
-  //   vehicleTiming: Yup.string().required('*Required'),
-  //   vehicleFromTo: Yup.string().required('*Required'),
-  //   // vehicleImageURL: Yup.string().required('*Required').matches(URL,'Url is not valid'),
-  //   vehicleImageURL: Yup.string().required('*Required'),
-  //   price: Yup.number().typeError('*You must specify a number').required('*Required'),
-  //   capacity: Yup.number().typeError('*You must specify a number').required('*Required').max(50, '*Should be less than 50'),
-  //   vehicleDescription: Yup.string().required('*Required'),
-  // })
+ 
   const onSubmitEdit = (id) => {
     setShow(false);
-    console.log(id);
-    console.log(busdetails);
+   
     axios.put(`http://localhost:8080/updateVehicleById/${id}`, busdetails, {
       headers: {
         Authorization: localStorage.getItem("token")
       }
     }).then((response) => {
-      console.log(response);
-
-      window.location.reload();
+      
+      toast.success('👍 Vehicle info edited', {
+        position: "top-center",
+        closeOnClick: true,
+        progress: undefined,
+        autoClose: 5000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+      setTimeout(()=>{
+        window.location.reload();
+      },3000)
+      
     })
   }
 
@@ -76,8 +70,11 @@ function VehicleProfile() {
       }
       )
         .then((response) => {
-          console.log(response);
-          window.location.reload();
+       
+          setTimeout(()=>{
+            window.location.reload();
+          },3000)
+        
 
         })
       toast.success('👍 Deleted Successfully', {
@@ -93,22 +90,27 @@ function VehicleProfile() {
   }
 
 
-  useEffect(() => {
-    document.title = "TravelYaari  ||  VehicleProfile";
-  }, []);
+  
   const [posts, setPosts] = useState([])
   useEffect(() => {
+    document.title = "TravelYaari  ||  VehicleProfile";
     axios.get("http://localhost:8080/admin/vehicles", {
       headers: {
         Authorization: localStorage.getItem("token")
       }
     })
       .then(res => {
-        console.log(res)
+      
         setPosts(res.data)
       })
       .catch(err => {
+
         console.log(err)
+        if(err.response.status===403){
+          setTimeout(()=>{
+            history.push("/user/home");
+          },2000)
+        }
       })
   }, [])
   const pageCount = Math.ceil(posts.length / cardsPerPage);
@@ -130,7 +132,7 @@ function VehicleProfile() {
 
               <Col xs={12} md={4} lg={3} key={post.id}>
 
-                <Card id="user_card" variant="dark">
+                <Card id="user_card" border="dark">
                   <Card.Img variant="top" id="bus_img" style={{ width: '100%', height: '150px' }} src={post.vehicleImageURL} />
                   <Accordion>
 
@@ -167,11 +169,9 @@ function VehicleProfile() {
     </Card.Body>
 
     <Modal show={show} onHide={handleClose}>
-      {/* <Formik initialValues={initialValues}
-        vaonSubmit={onSubmitEditlidationSchema={validationSchema}
-        onSubmit={onSubmitEdit}> */}
-      <Modal.Header closeButton><div style={{ marginLeft: '45%' }}><h3>Edit</h3></div></Modal.Header>
-      <Form >
+     
+      <Modal.Header closeButton><div style={{ marginLeft: '35%' }}><h3>Edit Vehicle </h3></div></Modal.Header>
+      <Form id="vehicleEditForm">
         <Modal.Body>
           <label htmlFor='vehicleName'>Vehicle Name</label>
           <div className="col-sm-6">
@@ -179,9 +179,7 @@ function VehicleProfile() {
               onChange={(e) => {
                 handleChange(e, "vehicleName")
               }} required />
-            {/* <ErrorMessage name='vehicleName' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+       
           </div>
 
           <label htmlFor='vehicleTiming'>Available Time</label>
@@ -191,9 +189,7 @@ function VehicleProfile() {
                 handleChange(e, "vehicleTiming")
               }}
               value={busdetails.vehicleTiming} />
-            {/* <ErrorMessage name='vehicleTiming' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+          
           </div>
 
           <label htmlFor='vehicleFrom'>From</label>
@@ -202,9 +198,7 @@ function VehicleProfile() {
               onChange={(e) => {
                 handleChange(e, "vehicleFrom")
               }} value={busdetails.vehicleFrom} />
-            {/* <ErrorMessage name='vehicleFromTo' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+        
           </div>
 
           <label htmlFor='vehicleTo'>To</label>
@@ -213,9 +207,7 @@ function VehicleProfile() {
               onChange={(e) => {
                 handleChange(e, "vehicleTo")
               }} value={busdetails.vehicleTo} />
-            {/* <ErrorMessage name='vehicleFromTo' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+          
           </div>
 
 
@@ -228,9 +220,7 @@ function VehicleProfile() {
                 handleChange(e, "vehicleImageURL")
               }}
               value={busdetails.vehicleImageURL} />
-            {/* <ErrorMessage name='vehicleImageURL' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+        
           </div>
 
           <label htmlFor='price'>Fare</label>
@@ -239,9 +229,7 @@ function VehicleProfile() {
               onChange={(e) => {
                 handleChange(e, "price")
               }} value={busdetails.price} />
-            {/* <ErrorMessage name='price' >
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+       
           </div>
 
           <label htmlFor='capacity'>Occupancy</label>
@@ -250,9 +238,7 @@ function VehicleProfile() {
               onChange={(e) => {
                 handleChange(e, "capacity")
               }} value={busdetails.capacity} />
-            {/* <ErrorMessage name='capacity'>
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+          
           </div>
 
           <label htmlFor='vehicleDescription'>Description</label>
@@ -262,9 +248,7 @@ function VehicleProfile() {
                 handleChange(e, "vehicleDescription")
               }}
               value={busdetails.vehicleDescription} />
-            {/* <ErrorMessage name='vehicleDescription'>
-              {msg => <div className='error'>{msg}</div>}
-            </ErrorMessage> */}
+           
           </div>
         </Modal.Body>
 
@@ -277,7 +261,7 @@ function VehicleProfile() {
         }} style={{ margin: '5px' }}>Update</Button>
 
       </Modal.Footer>
-      {/* </Formik> */}
+     
     </Modal>
 
     <ReactPaginate

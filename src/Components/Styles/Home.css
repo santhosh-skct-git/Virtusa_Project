@@ -17,6 +17,23 @@ video{
     object-fit: contain;
     justify-content: center;
 }
+#homeSgnupBtn{
+ 
+    background: rgba(0,0,0,0.5);
+  }
+  #homeSgnupBtn:hover{
+    background: rgba(255,255,255,1);
+    color: black;
+  }
+
+  #homeLgnBtn{
+    background: rgba(0,0,0,0.5);
+    
+  }
+  #homeLgnBtn:hover{
+    background: rgba(255,255,255,1);
+    color: black;
+  }
 
 .home-container >h1 {
     color: #fff;

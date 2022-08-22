@@ -25,7 +25,7 @@ function Category() {
                         </Card.Img>
                         <Card.Footer>
 
-                            <Button value="Sleeper" onClick={(e) => { handleType(e) }} id="categoryBtn">Add Sleeper</Button>
+                            <Button value="Sleeper" onClick={(e) => { handleType(e) }} id="categoryBtn1">Add Sleeper</Button>
                         </Card.Footer>
 
                     </Card>
@@ -45,7 +45,7 @@ function Category() {
 
                         </Card.Img>
                         <Card.Footer>
-                            <Button value="Seater" onClick={(e) => { handleType(e) }} id="categoryBtn"> Add Seater</Button>
+                            <Button value="Seater" onClick={(e) => { handleType(e) }} id="categoryBtn1"> Add Seater</Button>
                         </Card.Footer>
 
                     </Card>

@@ -1,31 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import AdminDashboard from './AdminDashboard'
 import './Styles/Usersprofile.css'
-import { Button, Modal, Form, ModalHeader } from 'react-bootstrap'
+import { Button, Modal, Form, ModalHeader, ModalBody } from 'react-bootstrap'
 import { Table } from 'react-bootstrap'
 import axios from 'axios'
 import { BiPencil, BiTrash } from "react-icons/bi";
+import {CgList} from "react-icons/cg"
 import { toast, ToastContainer } from 'react-toastify'
 import ReactPaginate from "react-paginate";
+import { useHistory } from 'react-router-dom'
+
 
 function UsersProfile() {
-
-    const [show, setShow] = useState(false)
+    const history=useHistory()
+    const [infoshow, setInfoShow] = useState(false)
+    const [bookingShow,setBookingShow] =useState(false)
     const [userDetails, setUserDetails] = useState({})
+    const [userBooking,setUserBooking]=useState([])
+    const [userName,setUserName]=useState("")
     const [pageNumber,setPageNumber]=useState(0);
+    const [ticketsPageNumber,setticketsPageNumber]=useState(0);
     const cardsPerPage = 5;
+    const ticketsPerPage =5;
     const pagesVisited = pageNumber * cardsPerPage;
-    
+    const ticketsVisited=ticketsPageNumber*ticketsPerPage;
     const handleShow = (id) => {
 
-        setShow(true);
+        setInfoShow(true);
         axios.get(`http://localhost:8080/getUserById/${id}`, {
             headers: {
               Authorization: localStorage.getItem("token")
             }
           }).then((response) => {
-            console.log(response.data.body);
-            setUserDetails(response.data.body)
+            
+            setUserDetails(response.data)
         })
             .catch((err) => {
                 console.log(err);
@@ -34,14 +42,13 @@ function UsersProfile() {
 
     }
     const EditSubmit = (userid) => {
-        console.log(userid)
-        console.log(userDetails);
+       
         axios.put(`http://localhost:8080/updateUserById/${userid}`,userDetails,{
             headers: {
               Authorization: localStorage.getItem("token")
             }
           }).then((response) => {
-            console.log(response);
+           
             toast.success('Updated Successfully', {
                 position: "top-center",
                 closeOnClick: true,
@@ -64,6 +71,8 @@ function UsersProfile() {
             [field]: event.target.value,
         })
     }
+   
+  
     const onClickDelete = async (data) => {
         if (window.confirm('Are you sure?')) {
             axios.delete(`http://localhost:8080/deleteUserById/${data}`, {
@@ -72,19 +81,22 @@ function UsersProfile() {
                 }
             }
             ).then((response) => {
-                console.log(response);
-                window.location.reload();
+                toast.success('Deleted Successfully', {
+                    position: "top-center",
+                    closeOnClick: true,
+                    progress: undefined,
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    pauseOnHover: true,
+                    draggable: true
+                })
+                setTimeout(()=>{
+                    window.location.reload();
+                },3000)
+               
             })
         }
-        toast.success('Deleted Successfully', {
-            position: "top-center",
-            closeOnClick: true,
-            progress: undefined,
-            autoClose: 5000,
-            hideProgressBar: true,
-            pauseOnHover: true,
-            draggable: true
-        })
+        
     }
     const [posts, setPost] = useState([])
     useEffect(() => {
@@ -93,17 +105,54 @@ function UsersProfile() {
               Authorization: localStorage.getItem("token")
             }
           }).then((res) => {
-            console.log(res)
+          
             setPost(res.data)
         })
-            .catch((err) =>
-                console.log(err))
+            .catch((err) =>{
+                console.log(err)
+                if(err.response.status===403){
+                    setTimeout(()=>{
+                      history.push("/user/home");
+                    },2000)
+                  }
+                })
     }, [])
+    const handleClose=()=>{
+        setBookingShow(false)
+        setInfoShow(false)
+    }
+    const onshowHistory =(id,name)=>{
+       
+        setBookingShow(true);
+        setUserName(name);
+        axios.get(`http://localhost:8080/getbyuserid/${id}`
+        ).then((response)=>{
+           
+           
+            setUserBooking(response.data)
+          
+        }).catch(err=>{
+            setBookingShow(false)
+            toast.warn('No bookings so far :(', {
+                closeOnClick: true,
+                progress: undefined,
+                autoClose: 2000,
+                hideProgressBar: true,
+                
+            })
+            console.log(err)
+        })
+    }
+   
     const pageCount = Math.ceil(posts.length / cardsPerPage);
+    const ticketCount =Math.ceil(userBooking.length/ticketsPerPage)
 
     const changePage = ({ selected }) => {
       setPageNumber(selected);
     };
+    const ticketsChangePage=({selected})=>{
+        setticketsPageNumber(selected);
+    }
     return <div id="usersbody" >
         <AdminDashboard />
 
@@ -117,6 +166,7 @@ function UsersProfile() {
 
                     <th>Edit</th>
                     <th>Delete</th>
+                    <th>Bookings</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,18 +181,19 @@ function UsersProfile() {
 
                                 <td><Button onClick={() => { handleShow(post.id) }} id="edituserbtn"><BiPencil /> </Button></td>
                                 <td><Button className="btn btn-warning" onClick={() => { onClickDelete(post.id) }} id="deleteuserbtn"><BiTrash /></Button></td>
-
+                                <td><Button className="btn btn-secondary" onClick={() => { onshowHistory(post.id,post.username) }} id="ticketuserbtn"><CgList /></Button></td>
                             </tr>
                         )
                     })
                 }
             </tbody>
         </Table>
+
         <ToastContainer />
 
-        <Modal show={show}>
-            <ModalHeader closeButton><div style={{ marginLeft: '35%' }}><h3>User Details</h3></div></ModalHeader>
-            <Form>
+        <Modal show={infoshow} onHide={handleClose}>
+            <ModalHeader ><div style={{ marginLeft: '35%' }}><h3>User Details</h3></div></ModalHeader>
+            <Form id="userEditForm">
                 <Modal.Body>
                     <label htmlFor="username">UserName</label>
                     <div className="col-sm-6">
@@ -165,12 +216,59 @@ function UsersProfile() {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button className="btn btn-warning" onClick={() => { setShow(false) }}>Cancel</Button>
+                    <Button className="btn btn-warning" onClick={() => { setInfoShow(false) }}>Cancel</Button>
                     <Button onClick={() => { EditSubmit(userDetails.id) }}>Update</Button>
 
                 </Modal.Footer>
 
             </Form>
+
+        </Modal>
+        <Modal show={bookingShow} onHide={handleClose} size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered>
+           <Modal.Header><Modal.Title>{userName}'s Booking History</Modal.Title></Modal.Header>
+            <ModalBody>
+                <Table bordered hover style={{justifyContent:'center'}}>
+                    <thead>
+                        <th>Date</th>
+                        <th>Vehicle_Name</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>No.of Persons</th>
+                    </thead>
+                    <tbody>
+                    {
+                    userBooking.slice(ticketsVisited, ticketsVisited + ticketsPerPage).map((booking) => {
+                        return (
+                            <tr key={booking.id} >
+                                <td>{booking.date}</td>
+                                <td>{booking.vehicleName}</td>
+                                
+                                <td>{booking.from}</td>
+                                <td>{booking.to}</td>
+                                <td>{booking.noOfPersons}</td>
+                             
+                              
+                            </tr>
+                        )
+                    })
+                }          
+                    </tbody>
+                </Table>
+            </ModalBody>
+            <ReactPaginate
+        previousLabel={"<"}
+        nextLabel={">"}
+        pageCount={ticketCount}
+        onPageChange={ticketsChangePage}
+        containerClassName={"ticketsBttns"}
+        previousLinkClassName={"previousBttn"}
+        nextLinkClassName={"nextBttn"}
+        disabledClassName={"paginationDisabled"}
+        activeClassName={"paginationActive"}
+      />
+    
 
         </Modal>
 

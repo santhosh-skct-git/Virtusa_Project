@@ -8,11 +8,15 @@
     
  
 }
+#ticketBookingForm{
+    position: relative;
+    padding-left: 20%;
+}
 
 #bookcard{
     background:rgba(255,255,255,0.55);
     margin-bottom: 5%;
-    margin-top: 5%;
+    margin-top: 3%;
     margin-left: 20%;
     margin-right: 15%;
     padding-bottom: 2rem;
@@ -27,9 +31,10 @@
 
   #addbookingbtn{
     margin-top: 5%;
-    
+    margin-left: 30%;
     background: rgba(255,255,255,0.55);
-    color:goldenrod
+    color:goldenrod;
+
   }
   #addbookingbtn:hover{
       background: rgba(16, 162, 230, 1);

@@ -10,3 +10,47 @@
 #logoutMenu{
     margin-top: 110%;
 }
+
+#cancelEmailBtn{
+    border-radius: 10%;
+    background: rgb(225, 220, 220);
+    color:black;
+}
+
+#cancelEmailBtn:hover{
+    background: rgba(195, 194, 192);
+    color:black
+}
+
+#sendEmailBtn{
+    border-radius: 10%;
+    background: rgb(45, 138, 245);
+    color:black
+}
+
+#sendEmailBtn:hover{
+    background: rgb(33, 119, 232);
+    color:white
+}
+
+#cancelInfoBtn{
+    border-radius: 10%;
+    background: rgb(225, 220, 220);
+    color:black;
+}
+
+#cancelInfoBtn:hover{
+    background: rgba(195, 194, 192);
+    color:black
+}
+
+#updateInfoBtn{
+    border-radius: 10%;
+    background: rgb(45, 138, 245);
+    color:black
+}
+
+#updateInfoBtn:hover{
+    background: rgb(33, 119, 232);
+    color:white
+}

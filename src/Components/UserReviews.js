@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react"
 import { Table, Button, Modal} from "react-bootstrap"
-
+import ReactPaginate from "react-paginate";
 import UserDashboard from "./UserDashboard";
 import './Styles/UserReviews.css'
 import axios from "axios";
@@ -15,26 +15,28 @@ function UserReviews() {
   const [review, setReview] = useState([])
   const [show, setShow] = useState(false)
   const [currentValue, setCurrentValue] = useState('');
-  
+  const [reviewPageNumber,setReviewPageNumber] =useState(0);
+  const reviewsPerPage=5;
+  const reviewsVisited=reviewPageNumber*reviewsPerPage;
   const handleClick = value => {
     setCurrentValue(value)
-    console.log(currentValue)
+  
   }
   const onSubmit = () => {
     setShow(false)
     const data = {
-      userid: localStorage.getItem("userid"),
+     
       username: localStorage.getItem("username"),
       desc: description,
       rating: currentValue
     }
-    console.log(data)
+    
         axios.post("http://localhost:8080/addreview", data, {
       headers: {
         Authorization: localStorage.getItem("token")
       }
     }).then((res) => {
-      console.log(res)
+    
       toast.success("Review submitted successfully")
       setTimeout(()=>{
         window.location.reload();
@@ -46,7 +48,9 @@ function UserReviews() {
     })
   }
 
-
+  const reviewsChangePage=({selected})=>{
+    setReviewPageNumber(selected);
+}
 
   const handleShow = () => {
     setShow(true)
@@ -63,13 +67,15 @@ function UserReviews() {
         Authorization: localStorage.getItem("token")
       }
     }).then((res) => {
-      console.log(res.data)
+      
        setReview(res.data)
 })
       .catch((err) =>
         console.log(err))
   }, []);
-  // console.log(des)
+  const reviewCount =Math.ceil(review.length/reviewsPerPage)
+
+
   return <div id="reviewbody">
     <UserDashboard />
     <ToastContainer/>
@@ -83,7 +89,7 @@ function UserReviews() {
       </thead>
       <tbody>
         {
-          review?.map((rev) => {
+          review?.slice(reviewsVisited, reviewsVisited + reviewsPerPage).map((rev) => {
            
             return (
               <tr key={rev.id}>
@@ -103,11 +109,23 @@ function UserReviews() {
       </tbody>
       <tfoot>
         <tr><td colSpan={3} ><Button style={{ marginLeft: '40%' }} onClick={() => { handleShow() }}>Add my review</Button></td></tr>
-
+        <tr> <td colSpan={3} ><ReactPaginate
+        previousLabel={"<"}
+        nextLabel={">"}
+        pageCount={reviewCount}
+        onPageChange={reviewsChangePage}
+        containerClassName={"reviewsPageBttns"}
+        previousLinkClassName={"previousBttn"}
+        nextLinkClassName={"nextBttn"}
+        disabledClassName={"paginationDisabled"}
+        activeClassName={"paginationActive"}
+      /></td></tr>
       </tfoot>
+      
     </Table>
+  
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>Hello {name}</Modal.Header>
+      <Modal.Header closeButton><Modal.Title>Hello {name}</Modal.Title></Modal.Header>
       <Modal.Body>
       <form style={{ marginLeft: '10%' }}>
         <label>Rating :</label>

@@ -6,9 +6,10 @@ import axios from 'axios'
 import ReactStars from "react-rating-stars-component";
 import ReactPaginate from "react-paginate";
 import { BsSearch } from 'react-icons/bs'
-
 import './Styles/UserHome.css'
-import { Card, Row, Col, Accordion, Modal, Form, FormGroup, Button } from 'react-bootstrap';
+import { Card, Row, Col, Accordion, Modal, Form,  Button } from 'react-bootstrap';
+import Marquee from "react-fast-marquee";
+
 function UserHome() {
   const [show, setShow] = useState(false)
   const [review, setReview] = useState([])
@@ -19,7 +20,7 @@ function UserHome() {
   const [buses, setBuses] = useState([])
    const [busesFrom, setBusesFrom] = useState('')
   const [busesTo, setBusesTo] = useState('')
-   const [busesType, setBusesType] = useState('')
+   const [busesType, setBusesType] = useState('Seater')
   const [description, setDescription] = useState()
   const username = localStorage.getItem("username")
   const [busName, setBusName] = useState()
@@ -34,7 +35,7 @@ function UserHome() {
       }
     })
       .then(res => {
-        console.log(res)
+      
         setPosts(res.data)
         setBuses(res.data)
       })
@@ -45,7 +46,7 @@ function UserHome() {
 
   
   const handleShow = (id, name) => {
-    localStorage.setItem("busid", id);
+   localStorage.setItem("busid",id)
     setShow(true)
     setBusName(name)
     axios.get(`http://localhost:8080/getbyvid/${id}`, {
@@ -53,28 +54,28 @@ function UserHome() {
         Authorization: localStorage.getItem("token")
       }
     }).then((res) => {
-      console.log(res.data)
+      
       setReview(res.data)
-
+      
     })
       .catch((err) =>
         console.log(err))
   }
   const handleReview = () => {
     const data = {
-      userid: localStorage.getItem("userid"),
+      
       username: localStorage.getItem("username"),
       desc: description,
       vid: localStorage.getItem("busid"),
       rating: rate
     }
-    console.log(data)
+    
     axios.post("http://localhost:8080/addreview", data, {
       headers: {
         Authorization: localStorage.getItem("token")
       }
     }).then((res) => {
-      console.log(res)
+      
       window.location.reload();
     }).catch((err) => {
       console.log(err)
@@ -94,52 +95,22 @@ function UserHome() {
   }
 
   
-    // const handleSearchFrom = event => {
-    //   const valueFrom = event.target.value.toLowerCase();
-    
-      
-    //   const searchBus = buses.filter(
-    //     bus => (`${bus.vehicleFrom}`.toLowerCase().includes(valueFrom))
-    //   );
-    //   setBuses(searchBus)
-      
-    // }
-    // const handleSearchTo = event => {
-    //   const valueTo = event.target.value.toLowerCase();
-     
-    //   const searchBusTo = buses.filter(
-    //     bus => (`${bus.vehicleTo}`.toLowerCase().includes(valueTo))
-    //   );
-    
-    //   setBuses(searchBusTo)
-    // }
- 
-
-//  const handleSelect = (e)=>{
-  
-//   console.log(e.currentTarget.value)
-//   const category =e.currentTarget.value;
- 
-//   const searchType =buses.filter(
-//     bus=>(bus.vehicleType.includes(category) )
-//   )
-//   setBuses(searchType)
-//  }
+   
 
 const handleSearch=()=>{
   
   if(busesFrom && !busesTo){
     
-  const searchBus=posts.filter(bus=>bus.vehicleFrom.includes(busesFrom) )
+  const searchBus=posts.filter(bus=>bus.vehicleFrom.includes(busesFrom) &&bus.vehicleType===busesType )
   setBuses(searchBus);
   }
   else if(!busesFrom && busesTo){
     
-    const searchBus=posts.filter(bus=>bus.vehicleTo.includes(busesTo))
+    const searchBus=posts.filter(bus=>bus.vehicleTo.includes(busesTo)&&bus.vehicleType===busesType )
     setBuses(searchBus);
   }
   else if(busesFrom && busesTo){
-    const searchBus=posts.filter(bus=>bus.vehicleFrom.includes(busesFrom) && bus.vehicleTo===busesTo)
+    const searchBus=posts.filter(bus=>bus.vehicleFrom.includes(busesFrom) && bus.vehicleTo.includes(busesTo) &&bus.vehicleType===busesType )
     setBuses(searchBus);
   }
   else
@@ -157,7 +128,7 @@ const handleSearch=()=>{
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
-
+ 
   return <div id="userhome">
     <UserDashboard />
 
@@ -176,17 +147,18 @@ const handleSearch=()=>{
           placeholder="Enter to place..." onChange={e=>{
             setBusesTo(e.currentTarget.value)
           }} />
-          {/* <span className="input-group-text">
+          <span className="input-group-text">
           Type
         </span>
-        <select className='form-control' id="category" name="category" onChange={(e)=>{setBusesType(e.currentTarget.value)
-        console.log(busesType)}}>
-      <option value="">All</option>
-      <option value="Sleeper">Sleeper</option>
-      <option value="Semi-Sleeper">Semi-Sleeper</option>
+        <select className='form-select' id="category" name="category" onChange={(e)=>{setBusesType(e.currentTarget.value)
+       }}>
       <option value='Seater'>Seater</option>
+      <option value="Semi-Sleeper">Semi-Sleeper</option>
+      <option value="Sleeper">Sleeper</option>
+     
+      
      </select>
-        */}
+       
       <span  className="input-group-text" >
         <Button onClick={handleSearch}><BsSearch/></Button>
         </span>
@@ -197,7 +169,7 @@ const handleSearch=()=>{
     
     </div>
 
-
+      
     <Row>
       {
         buses?.slice(pagesVisited, pagesVisited + cardsPerPage).map((post) => {
@@ -206,7 +178,7 @@ const handleSearch=()=>{
             <Col xs={12} md={4} lg={3} key={post.id} >
 
               <Card id="user_card" >
-                <Card.Img variant="top" id="bus_img" style={{ width: '100%', height: '150px' }} src={post.vehicleImageURL} />
+                <Marquee gradient={false}   loop={1} speed={120} ><Card.Img variant="top" id="bus_img" style={{ width: '100%', height: '150px' }} src={post.vehicleImageURL} /></Marquee>
 
                 <Accordion>
                   <Accordion.Header ><h6 style={{ color: "red" }}>{post.vehicleName}({post.vehicleType})</h6></Accordion.Header>
@@ -272,28 +244,38 @@ const handleSearch=()=>{
             </Row>
           </Accordion.Body>
         </Accordion>
-      </Modal.Body>
-      <Modal.Footer>
-        <Form>
-          <FormGroup as={Row}>
-            <label>{username}</label>
-            <textarea className='form-control' placeholder='Please give your valuable feedback here...' style={{ width: '80%', marginLeft: '3%' }} onChange={(e) => {
-              setDescription(e.target.value);
-            }} value={description} />
+        <Accordion>
+          <Accordion.Header>Add your reviews</Accordion.Header>
+          <Accordion.Body >
+          <Form>
+        
+        <label>{username}</label>
+        <textarea className='form-control' placeholder='Please give your valuable feedback here...' style={{ width: '80%',height:'45%',marginLeft:'5%'}} onChange={(e) => {
+          setDescription(e.target.value);
+        }} value={description} />
 
-
-            <ReactStars
-              count={5}
-              size={30}
-              onChange={ratingChanged}
-              activeColor="#ffd700"
-            />,
-          </FormGroup>
-        </Form>
-        <button className='btn btn-success' onClick={() => { handleReview() }}>Submit</button>
-        <button className='btn btn-info' onClick={() => { handleClose() }}>Close</button>
-      </Modal.Footer>
-
+        <div style={{ marginLeft:'5%',marginTop:'3%'}}>
+        <ReactStars
+          count={5}
+          size={30}
+          onChange={ratingChanged}
+          activeColor="#ffd700"
+          
+        />,
+        </div>
+    
+  
+    <button className='btn btn-success' style={{marginLeft:"15px"}} onClick={() => { handleReview() }}>Submit</button>
+    <button className='btn btn-info' style={{marginLeft:"15px"}} onClick={() => { handleClose() }}>Close</button>
+    </Form>
+  
+          </Accordion.Body>
+        </Accordion>
+        <Modal.Footer style={{justifyContent:'center'}}>
+         <button className='btn btn-secondary'  onClick={() => { handleClose() }}>Go back</button>
+         </Modal.Footer>
+        </Modal.Body>
+    
     </Modal>
 
     <ReactPaginate

@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import { Button } from './Button';
+import { Button } from 'react-bootstrap';
 import './Styles/Home.css';
 import { useHistory } from 'react-router-dom';
 
@@ -16,16 +16,12 @@ const Home = () => {
       <br></br>
       <div>
       <Button
-          className='btns'
-          buttonStyle='btn--outline'
-          buttonSize='btn--large' onClick={() => { history.push("/user/login") }}
+         id="homeLgnBtn" onClick={() => { history.push("/user/login") }}
         >
           LOG IN
         </Button>
         <Button
-          className='btns'
-          buttonStyle='btn--outline'
-          buttonSize='btn--large'
+          id="homeSgnupBtn"
           onClick={() => { history.push("/register") }}
         >
           SIGN UP 

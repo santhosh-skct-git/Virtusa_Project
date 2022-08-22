@@ -36,7 +36,7 @@ function Login() {
       username: userusername,
       password:userpassword
     }
-    console.log(usercred)
+   
     axios.post(`http://localhost:8080/authenticate`, usercred)
     .then((res) => {
         toast.success('Login Success', {
@@ -48,7 +48,7 @@ function Login() {
           draggable: true,
           progress: undefined,
           });
-          console.log(res)
+          
         localStorage.setItem("token", `Bearer ${res.data.jwttoken}`)
         const username=res.data.username
         const userId =res.data.userid
@@ -63,6 +63,7 @@ function Login() {
         }, 3000);
       })
       .catch((err) => {
+        console.log(err.response.data)
       toast.error('Invalid credentials', {
       position: "top-center",
       autoClose: 5000,

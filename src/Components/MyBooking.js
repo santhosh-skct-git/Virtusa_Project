@@ -6,16 +6,18 @@ import { toast, ToastContainer } from 'react-toastify';
 import './Styles/booking.css'
 import './Styles/mybooking.css'
 import ModalHeader from 'react-bootstrap/esm/ModalHeader';
-
+import ReactPaginate from "react-paginate";
 
 function MyBooking() {
 
-    const [posts, setPost] = useState();
+    const [posts, setPost] = useState([]);
     const [show, setShow] = useState(false);
     const userid = localStorage.getItem("userid");
     const currentDate = new Date().toISOString().substr(0, 10);
-
-    console.log(currentDate);
+    const [bookingPage,setBookingPage]=useState(0);
+    const bookingPerPage=5;
+    const bookingVisted =bookingPage *bookingPerPage;
+    
     const handleCancel = (id, bookingDate) => {
         if (bookingDate > currentDate) {
 
@@ -35,14 +37,15 @@ function MyBooking() {
                         pauseOnHover: true,
                         draggable: true
                     })
-                    window.location.reload();
+                    setTimeout(()=>{
+                        window.location.reload();
+                    },2000)
+                   
                 })
             }
         }
         else {
-            console.log(currentDate)
-            console.log(bookingDate > currentDate)
-            toast.error('Sorry ,cannot cancel the ticket', {
+            toast.error('Sorry ,You can cancel the ticket only before booking date', {
                 position: "top-center",
                 closeOnClick: true,
                 progress: undefined,
@@ -57,12 +60,8 @@ function MyBooking() {
         document.title = "TravelYaari  ||  MyBooking";
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/getbyuserid/${userid}`, {
-            headers: {
-                Authorization: localStorage.getItem("token"),
-            }
-        }).then((res) => {
-            console.log(res)
+        axios.get(`http://localhost:8080/getbyuserid/${userid}`).then((res) => {
+            
             setPost(res.data)
         })
             .catch((err) =>
@@ -84,15 +83,17 @@ function MyBooking() {
             vehicleTiming: posts.vehicleTiming
         }))
     };
-    console.log(data);
+    
     const handleClose = () => setShow(false);
 
     const showAmount = (data) => {
         return data.pricePerHead * data.noOfPersons;
     }
     localStorage.getItem("username")
-
-
+    const bookingCount =Math.ceil(posts.length/bookingPerPage);
+    const bookingsChangePage=({selected})=>{
+        setBookingPage(selected);
+    }
 
 
 
@@ -111,7 +112,7 @@ function MyBooking() {
             </thead>
             <tbody>
                 {
-                    posts?.map((post, index) => {
+                    posts?.slice(bookingVisted,bookingVisted+bookingPerPage).map((post, index) => {
                         return <tr key={post.id}>
                             <td>{post.date}</td>
 
@@ -123,8 +124,27 @@ function MyBooking() {
 
 
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colSpan={3}>
+                    <ReactPaginate
+        previousLabel={"<"}
+        nextLabel={">"}
+        pageCount={bookingCount}
+        onPageChange={bookingsChangePage}
+        containerClassName={"bookingsPageBttns"}
+        previousLinkClassName={"previousBttn"}
+        nextLinkClassName={"nextBttn"}
+        disabledClassName={"paginationDisabled"}
+        activeClassName={"paginationActive"}
+      />
+
+                    </td>
+                </tr>
+            </tfoot>
 
         </Table>
+        
         <ToastContainer />
         <Modal show={show} dialogclassNameName="modal-100w" onHide={handleClose} >
             <div className="wrapper bg-white">
@@ -138,25 +158,27 @@ function MyBooking() {
                         </div>
 
                     </div>
-                    <div classN ame="form-group d-sm-flex margin">
-                        <div className="d-flex align-items-center flex-fill me-sm1 my-sm-0 border-bottom position-relative"> <input type="text" required placeholder="From Date" value={data.date} className="form-control" />
-                            <div className="label" id="from"></div>
+                   
+                    <div className="form-group d-sm-flex margin">
+                        <div className="d-flex align-items-center flex-fill me-sm1 my-sm-0 border-bottom position-relative">  <input type="text" required placeholder="From Date" value={data.date} className="form-control" />
+                        <div className="label" id="from"></div>
                         </div>
 
                     </div>
+                
                     <div className="form-group d-sm-flex margin">
-                        <div className="form-group border-bottom d-flex align-items-center position-relative"> <input type="text" value={data.from} required placeholder="From place" className="form-control" />
+                        <div className="form-group border-bottom  position-relative"> <input type="text" value={data.from} required placeholder="From place" className="form-control" />
                             <div className="label" id="fromplace"></div> <span className="fas fa-users text-muted"></span>
                         </div>
-                        <div className="form-group border-bottom d-flex align-items-center position-relative"> <input type="text" value={data.to} required placeholder="To place" className="form-control" />
+                        <div className="form-group border-bottom  position-relative"> <input type="text" value={data.to} required placeholder="To place" className="form-control" />
                             <div className="label" id="toplace"></div> <span className="fas fa-users text-muted"></span>
                         </div>
                     </div>
                     <div className="form-group d-sm-flex margin">
-                        <div className="form-group border-bottom d-flex align-items-center position-relative"> <input type="text" value={data.noOfPersons} required placeholder="Number of persons" className="form-control" />
+                        <div className="form-group border-bottom  position-relative"> <input type="text" value={data.noOfPersons} required placeholder="Number of persons" className="form-control" />
                             <div className="label" id="person"></div> <span className="fas fa-users text-muted"></span>
                         </div>
-                        <div className="form-group border-bottom d-flex align-items-center position-relative"> <input type="text" required placeholder="Total amount" value={showAmount(data)} className="form-control" />
+                        <div className="form-group border-bottom  position-relative"> <input type="text" required placeholder="Total amount" value={showAmount(data)} className="form-control" />
                             <div className="label" id="price"></div> <span className="fas fa-users text-muted"></span>
                         </div>
                     </div>

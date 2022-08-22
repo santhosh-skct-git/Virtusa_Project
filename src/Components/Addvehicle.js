@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { Card } from 'react-bootstrap'
-//import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 import { useHistory } from 'react-router-dom'
 import {
@@ -19,7 +18,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function Addvehicle() {
     const history = useHistory()
     const vehicleType=localStorage.getItem("vehicleType");
-    // const URL = /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm
     const initialValues = {
         vehicleName: '',
         vehicleTiming: '',
@@ -36,8 +34,6 @@ function Addvehicle() {
         vehicleTiming: Yup.string().required('*Required'),
         vehicleFrom: Yup.string().required('*Required'),
         vehicleTo: Yup.string().required('*Required'),
-
-        //vehicleImageURL: Yup.string().required('*Required').matches(URL,'Url is not valid'),
         vehicleImageURL: Yup.string().required('*Required'),
         price: Yup.number().typeError('*You must specify a number').required('*Required'),
         capacity: Yup.number().typeError('*You must specify a number').required('*Required').max(50, '*Should be less than 50'),
@@ -55,7 +51,7 @@ function Addvehicle() {
             vehicleDescription: data.vehicleDescription,
             vehicleType:vehicleType
         }
-        console.log(data1);
+      
        
 
         axios.post('http://localhost:8080/addvehicle', data1,{
@@ -64,7 +60,7 @@ function Addvehicle() {
             }
           }).then(
             (response) => {
-                console.log(response);
+              
                 toast.success('👍 Added Successfully', {
                     position: "top-center",
                     closeOnClick: true,
@@ -74,7 +70,10 @@ function Addvehicle() {
                     pauseOnHover: true,
                     draggable: true
                 })
-                history.push('/admin/vehicleprofile')
+                setTimeout(()=>{
+                    history.push('/admin/vehicleprofile')
+                },3000)
+                localStorage.removeItem("vehicleType")
 
             }, (error) => {
                 console.log(error);
@@ -87,13 +86,23 @@ function Addvehicle() {
                     pauseOnHover: true,
                     draggable: true
                 })
-                console.log("error");
+               
             }
         )
         
         onSubmitProps.setSubmitting(false)
         onSubmitProps.resetForm()
     }
+    useEffect(() => {
+      const category= localStorage.getItem("vehicleType")
+        if(!category){
+            
+                toast.warn("Please select the vehicle type to add");
+                setTimeout(()=>{
+                    history.push("/category")
+                },2000)
+        }
+    }, [])
     useEffect(() => {
         document.title = "TravelYaari  ||  AddVehicle";
     }, []);
